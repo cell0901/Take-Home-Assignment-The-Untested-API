@@ -6,10 +6,10 @@ const getAll = () => [...tasks];
 
 const findById = (id) => tasks.find((t) => t.id === id);
 
-const getByStatus = (status) => tasks.filter((t) => t.status.includes(status));
+const getByStatus = (status) => tasks.filter((t) => t.status === status);
 
-const getPaginated = (page, limit) => {
-  const offset = page * limit;
+const getPaginated = (page, limit) => { // start page should be 1.
+  const offset = (page - 1) * limit;
   return tasks.slice(offset, offset + limit);
 };
 
@@ -48,7 +48,15 @@ const update = (id, fields) => {
   if (index === -1) return null;
 
   // since js doesnt duplicate the object fields. so the older fields value end are replaced with new values added at end
-  const updated = { ...tasks[index], ...fields };
+  const updated = {
+    ...tasks[index],
+    title: fields.title ?? tasks[index].title,
+    description: fields.description ?? tasks[index].description,
+    status: fields.status ?? tasks[index].status,
+    priority: fields.priority ?? tasks[index].priority,
+    dueDate: fields.dueDate ?? tasks[index].dueDate,
+  };
+
   tasks[index] = updated;
   return updated;
 };
@@ -77,6 +85,21 @@ const completeTask = (id) => {
   return updated;
 };
 
+const assign = (id, assignee) => {
+  const task = findById(id);
+  if (!task) return null;
+
+  const updated = {
+    ...task,
+    assignee,
+  };
+
+  const index = tasks.findIndex((t) => t.id === id);
+  tasks[index] = updated;
+
+  return updated;
+};
+
 const _reset = () => {
   tasks = [];
 };
@@ -91,5 +114,6 @@ module.exports = {
   update,
   remove,
   completeTask,
+  assign,
   _reset,
 };

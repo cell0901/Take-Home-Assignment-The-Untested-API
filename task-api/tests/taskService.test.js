@@ -97,10 +97,25 @@ describe("taskService", () => {
         title: Math.random().toString(36).substring(2, 7)
       })
     }
-    const todos = getPaginated(0, 3)
+    const todos = getPaginated(1, 3)
     expect(todos.length).toBe(3)
-
   })
 
+  test("update should not allow changing protected fields", () => {
+    const task = create({
+      title: "original",
+      description: "description",
+    });
+
+    const updated = update(task.id, {
+      title: "updated",
+      id: "fake-id",
+      createdAt: "fake-date",
+    });
+
+    expect(updated.title).toBe("updated");
+    expect(updated.id).toBe(task.id);
+    expect(updated.createdAt).toBe(task.createdAt);
+  });
 
 });

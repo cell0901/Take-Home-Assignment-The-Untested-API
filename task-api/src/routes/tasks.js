@@ -17,8 +17,15 @@ router.get('/', (req, res) => {
   }
 
   if (page !== undefined || limit !== undefined) {
-    const pageNum = parseInt(page) || 1;
-    const limitNum = parseInt(limit) || 10;
+    const pageNum = Number(page)
+    const limitNum = Number(limit)
+
+    if (!Number.isInteger(pageNum) || !Number.isInteger(limitNum) || pageNum < 1 || limitNum < 1) {
+      return res.status(400).json({
+        error: 'page and limit must be positive integers',
+      });
+    }
+
     const tasks = taskService.getPaginated(pageNum, limitNum);
     return res.json(tasks);
   }
@@ -65,6 +72,29 @@ router.patch('/:id/complete', (req, res) => {
   if (!task) {
     return res.status(404).json({ error: 'Task not found' });
   }
+
+  res.json(task);
+});
+
+router.patch('/:id/assign', (req, res) => { // assign a task to user
+  const { assignee } = req.body;
+
+  if (typeof assignee !== 'string' || assignee.trim() === '') {
+    return res.status(400).json({ error: 'Assignee is required' });
+  }
+
+  const existingTask = taskService.findById(req.params.id);
+
+  if (!existingTask) {
+    return res.status(404).json({ error: 'Task not found' });
+  }
+
+  // check if assignee already exist then dont update
+  if (existingTask.assignee) {
+    return res.status(400).json({ error: 'Task is already assigned' });
+  }
+
+  const task = taskService.assign(req.params.id, assignee.trim());
 
   res.json(task);
 });
