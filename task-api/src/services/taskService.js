@@ -47,6 +47,7 @@ const update = (id, fields) => {
   const index = tasks.findIndex((t) => t.id === id);
   if (index === -1) return null;
 
+  // since js doesnt duplicate the object fields. so the older fields value end are replaced with new values added at end
   const updated = { ...tasks[index], ...fields };
   tasks[index] = updated;
   return updated;
@@ -66,7 +67,7 @@ const completeTask = (id) => {
 
   const updated = {
     ...task,
-    priority: 'medium',
+    // priority: 'medium', // should not change priority of tasks to medium
     status: 'done',
     completedAt: new Date().toISOString(),
   };
