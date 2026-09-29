@@ -10,10 +10,10 @@ describe("taskService", () => {
     const title = "first todo";
     let task = create({
       title: title,
-      status: "in-progress",
+      status: "in_progress",
       description: 'something',
     });
-    expect(task.status).toBe("in-progress")
+    expect(task.status).toBe("in_progress")
     expect(task.title).toBe(title)
     expect(task.description).toBe('something')
   })
@@ -30,12 +30,12 @@ describe("taskService", () => {
   test('getByStatus returns filtered todos', () => {
     create({
       title: "third todo",
-      status: "in-progress"
+      status: "in_progress"
     });
 
-    const tasks = getByStatus('in-progress');
+    const tasks = getByStatus('in_progress');
     tasks.map(t => {
-      expect(t.status).toBe('in-progress')
+      expect(t.status).toBe('in_progress')
       expect(t.status).not.toBe('todo')
       expect(t.status).not.toBe('done')
     });
@@ -99,6 +99,7 @@ describe("taskService", () => {
     }
     const todos = getPaginated(0, 3)
     expect(todos.length).toBe(3)
+
   })
 
 
